@@ -1,45 +1,45 @@
 # AuroraWake
 
-> Un réveil intelligent qui accompagne progressivement le réveil au lieu de le brusquer.
+> A smart alarm clock that gently guides you into waking up instead of startling you.
 
-AuroraWake est un projet de réveil lumineux et sonore conçu pour rendre le réveil plus naturel. L'appareil adapte progressivement l'intensité de sa lumière et, si nécessaire, ajoute un son doux à l'heure choisie.
+AuroraWake is a light and sound alarm clock project designed to make waking up feel more natural. The device gradually adjusts its light intensity and, if necessary, adds a gentle sound at the selected time.
 
-## Objectifs
+## Goals
 
-- Réduire les réveils brusques et désagréables.
-- Utiliser une lumière progressive comme signal principal de réveil.
-- Garder une expérience simple, silencieuse et respectueuse du sommeil.
-- Concevoir un appareil accessible, réparable et documenté.
+- Reduce sudden and unpleasant wake-ups.
+- Use gradually increasing light as the primary wake-up signal.
+- Keep the experience simple, quiet, and respectful of sleep.
+- Design an accessible, repairable, and well-documented device.
 
-## Organisation du projet
+## Project structure
 
 ```text
 AuroraWake/
-├── docs/        Documentation, schémas et décisions de conception
-├── firmware/    Code embarqué du réveil
-├── hardware/    Schémas, PCB et fichiers de fabrication
-├── prototypes/  Essais, maquettes et expérimentations
-└── README.md    Présentation du projet
+├── docs/        Documentation, schematics, and design decisions
+├── firmware/    Alarm clock embedded software
+├── hardware/    Schematics, PCB, and manufacturing files
+├── prototypes/  Tests, mockups, and experiments
+└── README.md    Project overview
 ```
 
-## Développement en cours
+## Development status
 
-Le projet est actuellement en phase de conception électronique. L'architecture générale a été définie autour d'un contrôleur **ESP32**, qui coordonnera :
+The project is currently in the electronic design phase. The overall architecture is built around an **ESP32** controller, which will coordinate:
 
-- l'éclairage progressif via un variateur de tension ;
-- l'affichage des informations de l'alarme ;
-- le haut-parleur via un amplificateur audio ;
-- les boutons physiques et l'horloge RTC ;
-- la communication Bluetooth avec une application smartphone.
+- gradual lighting through a voltage dimmer;
+- alarm information on the display;
+- the speaker through an audio amplifier;
+- the physical buttons and the RTC clock;
+- Bluetooth communication with a smartphone application.
 
-La prochaine étape consiste à sélectionner les composants adaptés et à vérifier leur compatibilité. Le schéma sera ensuite détaillé avant la conception du premier prototype.
+The next step is to select suitable components and check their compatibility. The schematic will then be refined before the first prototype is designed.
 
 <div align="center">
-	<img src="docs/img/AuroraWake.png" alt="Architecture fonctionnelle du projet AuroraWake" width="700">
+	<img src="docs/img/AuroraWake.png" alt="AuroraWake functional architecture" width="500" style="margin: 24px 0;">
 </div>
 
-*Architecture fonctionnelle prévisionnelle d'AuroraWake.*
+<p align="center"><em>Preliminary functional architecture of AuroraWake.</em></p>
 
-## Auteur
+## Author
 
-Projet conçu et développé par **Bosco**.
+Project designed and developed by **Bosco**.
