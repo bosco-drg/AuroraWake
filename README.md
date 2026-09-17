@@ -42,4 +42,4 @@ The next step is to select suitable components and check their compatibility. Th
 
 ## Author
 
-Project designed and developed by **Bosco**.
+Project designed and developed by **Bosco drg**.
