@@ -19,7 +19,7 @@
 
 | Référence | Composant | Valeur / Modèle | Qté | Fonction |
 |---|---|---|---:|---|
-| LED1 | Panneau LED COB |  | 1 | Éclairage principal |
+| LED1 | Panneau LED COB | 12V 15W | 1 | Éclairage principal |
 
 ---
 
