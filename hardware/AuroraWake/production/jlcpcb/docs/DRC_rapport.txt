@@ -1,0 +1,14 @@
+** Drc report for AuroraWake.kicad_pcb **
+** Created on 2026-11-17T23:12:48+0100 **
+** Report includes: Errors, Warnings, Exclusions **
+
+** Found 1 DRC violations **
+[lib_footprint_mismatch]: Footprint 'ESP32-S3-WROOM-1' does not match copy in library 'RF_Module'.
+    Local override; warning
+    @(152.3326 mm, 43.5705 mm): Footprint U201
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

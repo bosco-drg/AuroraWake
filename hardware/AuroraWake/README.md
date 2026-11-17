@@ -9,20 +9,20 @@ Le schéma est exporté en PDF dans [docs/AuroraWake_schema.pdf](docs/AuroraWake
 | Sujet | Décision | Pourquoi |
 |---|---|---|
 | Entrée | Jack DC conservé : **CUI PJ-063AH, 8 A** | Un jack ne supporte pas 17 A, donc le **panneau est limité à 50 W (4,2 A)**. Courant total ≈ 4,9 A, soit environ 60 % du calibre du jack. |
-| Panneau 60 W | Possible, avec un fusible **T8A** | 5,7 A au total. Le fusible T6,3A fonctionnerait alors à 90 % de son calibre et risquerait de griller sans raison. La marge sur le jack se réduit. |
+| Panneau 60 W | Possible, avec un fusible NANO² **10 A** | 5,7 A au total : le fusible de 7 A fonctionnerait alors à 81 % de son calibre, au-delà de la règle des 75 %. La marge sur le jack se réduit. |
 | Bloc d'alimentation | **12 V ≥ 6 A** (≥ 8 A pour un panneau de 60 W) | — |
 | Module | **ESP32-S3-WROOM-1-N16R8** (module nu) | 16 Mo de flash pour les sons, 8 Mo de PSRAM pour les tampons audio. Un DevKitC-1 N16R8 suffit pour développer le firmware en attendant les cartes. |
-| Fabrication | JLCPCB PCBA, **2 couches, cuivre 2 oz**, environ 100 × 80 mm | Les pièces traversantes (jack, porte-fusible, bornier, boutons, porte-pile, buzzer) sont soudées à la main ou en option THT. |
+| Fabrication | JLCPCB PCBA, **2 couches, cuivre 2 oz**, environ 100 × 80 mm | Les pièces traversantes (jack, bornier, boutons, buzzer, barrettes) sont soudées à la main ou en option THT. |
 | Références LCSC | **Non renseignées** | À compléter au moment du rapprochement de la BOM chez JLCPCB. Chaque MPN est dans le champ `MPN` du symbole. |
 
 ## 1. BOM (justifiée)
 
-Liste complète et regroupée : [docs/bom_kicad.csv](docs/bom_kicad.csv), soit 132 composants. Les composants structurants :
+Liste complète et regroupée : [docs/bom_kicad.csv](docs/bom_kicad.csv), soit 112 composants. Les composants structurants :
 
 | Réf | Composant | Boîtier | Justification / alternative |
 |---|---|---|---|
 | J101 | Jack DC CUI PJ-063AH | THT | Jack 8 A. Broche centrale de 2,0 mm : **vérifier la fiche du bloc d'alimentation** (5,5×2,1). |
-| F101 | Fusible 5×20 temporisé T6,3A + porte-fusible Schurter 0031.8201 | THT | Remplaçable. Le type temporisé absorbe l'appel de courant de C101 (470 µF). |
+| F101 | Fusible Littelfuse NANO² 451, **7 A rapide** (0451007.MRL) | CMS 7,5 × 3,8 mm | 10 fois plus petit que le 5×20, assemblé par JLCPCB. Charge de 70 % à 4,9 A. L'appel de courant de C101 au branchement (≈0,3 A²s) reste très inférieur à l'I²t du fusible : à vérifier dans la datasheet. Soudé, donc non remplaçable ; pour un fusible remplaçable, utiliser le porte-fusible OMNI-BLOK 157x, de même encombrement. |
 | Q101 | AOD4185 (P-MOS −40 V, ≈15 mΩ) | TO-252 | Protection contre l'inversion de polarité : 0,36 W de pertes contre ≈2,5 W pour une Schottky. Alternative : contrôleur de diode idéale LM74700 avec un N-MOS. |
 | D101 | BZT52C15 | SOD-123 | Limite Vgs de Q101 à 15 V (maximum autorisé : ±20 V). |
 | D102 | SMBJ15A (TVS 600 W) | SMB | Écrête les surtensions à ~24 V. Placée **après** Q101 pour ne pas être sollicitée en cas d'inversion. |
@@ -55,7 +55,7 @@ Liste complète et regroupée : [docs/bom_kicad.csv](docs/bom_kicad.csv), soit 1
 
 ```mermaid
 flowchart LR
-  JACK[Jack 12 V 8 A] --> F[F101 T6,3A] --> RP[Q101 anti-inversion<br/>+ TVS SMBJ15A] --> V12((+12V))
+  JACK[Jack 12 V 8 A] --> F[F101 7 A] --> RP[Q101 anti-inversion<br/>+ TVS SMBJ15A] --> V12((+12V))
   V12 --> LED[J301 panneau LED ≤50 W] --> Q[Q301 N-MOS<br/>UCC27511A] --> PGND((PGND))
   V12 --> BUCK[U101 AP63205<br/>buck 5 V 2 A] --> V5((+5V))
   V5 --> AMP[U401 MAX98357A] --> HP[HP 4 Ω 3 W]
@@ -117,7 +117,7 @@ Ces classes de nets sont déjà déclarées dans [AuroraWake.kicad_pro](AuroraWa
 6. **Antenne de l'ESP32** : le module déborde du bord de la carte, ou une zone sans cuivre de 15 mm (toutes couches) est réservée sous l'antenne et autour.
 7. Découplage : chaque condensateur de 100 nF à moins de 2 mm de la broche alimentée, avec un via GND direct.
 8. Isolement : 0,2 mm minimum (règles JLCPCB 2 oz), 0,3 mm sur le réseau 12 V de puissance. La basse tension ne demande pas d'exigence de sécurité particulière.
-9. Points de test (Ø 1,5 mm) : TP101–106 pour les rails, TP201/202 pour EN et IO0, TP301–303 pour PWM, GATE et LED_K, TP401–403 pour l'I2S, TP501/502 pour la SD, TP601–604 pour l'I2C, INT et VBAT.
+9. Pas de points de test dédiés : on mesure sur les pads des condensateurs de découplage (rails), sur les barrettes J202/J203 (UART, EN, IO0, 3V3) et sur les pattes des CI (bus).
 
 ## 3. Schéma KiCad
 
@@ -175,3 +175,61 @@ Réglages firmware associés :
 - **Disponibilité LCSC** : MAX98357A, UCC27511A et DS3231SN sont des pièces « extended » (frais de chargement par référence). Les alternatives sont listées dans la BOM ci-dessus.
 - **Valeurs à confirmer avec les datasheets avant commande** : seuils de ~SD_MODE du MAX98357A (le canal gauche est choisi avec une large marge), Rds(on) de l'AOD4184A à 4,5 V, valeur exacte de L101 pour l'AP63205.
 - **Étape suivante** : mise en forme graphique du schéma, affectation des références LCSC, puis placement du PCB de 100×80 mm selon les zones décrites ci-dessus.
+
+## 6. PCB ([AuroraWake.kicad_pcb](AuroraWake.kicad_pcb))
+
+Le PCB a été généré par [tools/pcb_build.py](tools/pcb_build.py) à partir de [tools/pcb_place.py](tools/pcb_place.py) (placement) et de [tools/pcb_route.py](tools/pcb_route.py) (cuivre de puissance). Les empreintes sont liées aux symboles : « Mettre à jour le PCB depuis le schéma » (F8) fonctionne.
+
+**État actuel :**
+- Carte de 100 × 80 mm, coins arrondis R3, 2 couches, 4 trous M3. Cuivre 2 oz : **à choisir à la commande JLCPCB** (option « Outer copper weight »), ce n'est pas inscrit dans les Gerber.
+- 112 empreintes placées explicitement, sans ajustement automatique :
+  - passifs alignés en rangées ou colonnes, à pas réguliers de 3 à 3,4 mm ;
+  - même orientation dans chaque bloc ;
+  - circuits intégrés alignés ;
+  - 4 trous M3 symétriques ;
+  - tous les connecteurs sur les bords.
+- Disposition par zones (vue de dessus) :
+  - haut-gauche : entrée 12 V ;
+  - haut-centre : panneau LED ;
+  - haut-droite : ESP32, antenne au bord supérieur ;
+  - gauche-milieu : buck et LDO, sur une seule rangée alignée ;
+  - centre : RTC, avec le buzzer sous l'ESP32 ;
+  - centre-droit : audio ;
+  - bas : boutons, OLED, microSD et haut-parleur, tous au bord ;
+  - bord droit : USB-C, RESET/BOOT et barrettes.
+- Le porte-pile CR2032 (BT601) est **sous la carte**, sous le RTC (soudure manuelle ou assemblage double face).
+- Cuivre de puissance déjà fait :
+  - zone **+12V** en face avant et plan **PGND** en face arrière, limités à la zone de puissance ;
+  - pistes de 2,5 mm pour VIN_RAW, VIN_FUSED et LED_K ;
+  - boucle Q301 → C303 ;
+  - alimentation du buck ;
+  - vias PGND ;
+  - plans **GND** sur les deux faces partout ailleurs.
+- Sérigraphie placée automatiquement par [tools/pcb_silk.py](tools/pcb_silk.py), sans chevauchement. **Tous les textes sont horizontaux**, lisibles depuis le bas de la carte. Repères de 0,8 mm. Seuls R301 et R204, faute de place, ne sont visibles que sur F.Fab, le plan d'assemblage. Le titre est au dos.
+- **Routage terminé** : les signaux ont été routés par Freerouting, puis finalisés par [tools/pcb_finish.py](tools/pcb_finish.py).
+- **DRC : 0 violation, 0 connexion manquante, 0 écart avec le schéma.**
+
+**Finition après Freerouting** (`python3 tools/pcb_finish.py`, qui écrit d'abord une sauvegarde `AuroraWake.kicad_pcb.bak`). Le script ne modifie pas le placement, sauf l'échange FB402/FB403 et C404/C405 décrit plus bas.
+- **Largeur des pistes** : Freerouting avait tracé des pistes de 0,187 mm, sous le minimum de 0,2 mm. Elles sont élargies à 0,2 mm.
+- **Conflits d'élargissement** : les nets devenus trop proches de leurs voisins après élargissement sont supprimés puis reroutés.
+- **Routeur A\*** sur grille de 0,1 mm et 2 couches. Il respecte les dégagements des classes de nets, les trous, la zone d'antenne et la zone de puissance. Il termine VBUS, +3V3, +12V, VIN_SENSE, PGND et les sorties audio.
+- **Sorties audio** : elles se croisaient. OUTP (broche 9) est sous OUTN (broche 10), mais FB402 était au-dessus de FB403. FB402/FB403 et C404/C405 sont échangés, et `pcb_place.py` est corrigé en conséquence.
+- **Masse de l'ampli** : les broches GND 11 et 15 de U401 sont reliées au pad central.
+- **Vias vers les plans** :
+  - PGND : C301, C302, R303 ;
+  - GND : U501, ainsi que le blindage et la broche VSS (masse de la carte SD) du lecteur microSD.
+- **+12V** : C303 (+) est relié explicitement au côté principal de la zone, coupée en deux par la rangée C102/D102/U301/Q301.
+- **Plan GND** : environ 150 vias de couture, plus une via dans chaque îlot isolé.
+- **Nettoyage** : suppression des pistes et vias pendantes signalées par KiCad.
+
+**Ordre de routage manuel conseillé :**
+1. Boucle du buck : C103/C104 → U101 → BUCK_SW → L101 → C106/C107, avec des pistes courtes et larges (classe PWR_5V, 0,8 mm).
+2. Boucle de grille : U301 → R301/R302 → Q301 → retour PGND, et LED_PWM depuis IO21.
+3. USB D+/D− en paire différentielle (routeur de paires, touche 6), du J201 vers U202 puis vers IO19/IO20.
+4. Alimentations +5V, VSYS, +3V3 et +5V_AUD (0,8 mm), puis le découplage de l'ESP32 (C201/C202, au plus près de la broche 2).
+5. Bus I2S, SPI SD, I2C, puis boutons et GPIO divers, en 0,25 mm.
+6. Vias de couture GND (tous les 5 mm environ), puis re-remplissage des zones (touche B) et DRC.
+
+Ne rien router sous l'antenne de l'ESP32 : la zone interdite de l'empreinte est active.
+
+**Régénérer :** `python3 tools/pcb_build.py`. La commande refuse de s'exécuter si un routage manuel est détecté ; `--force` efface tout le routage.

@@ -1,0 +1,12 @@
+Designator,Valeur,Empreinte,Reference fabricant,Quantite
+BT601,CR2032,BatteryHolder_Keystone_3034_1x20mm,Keystone 3034,1
+BZ401,Buzzer passif 5V,Buzzer_12x9.5RM7.6,,1
+J101,Jack 12V 8A (PJ-063AH),BarrelJack_CUI_PJ-063AH_Horizontal,CUI PJ-063AH,1
+J202,UART0 / prog,PinHeader_1x06_P2.54mm_Vertical,,1
+J203,Extension / JTAG,PinHeader_1x08_P2.54mm_Vertical,,1
+J301,Panneau LED 12V <=50W,TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal,"Bornier 5,08 mm >= 15 A",1
+J401,HP 4-8 Ohm 3W,JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical,,1
+J701,OLED SSD1306 128x64 0x3C,PinSocket_1x04_P2.54mm_Vertical,,1
+SW801,MODE/OK,SW_PUSH_6mm_H8mm,,1
+SW802,+,SW_PUSH_6mm_H8mm,,1
+SW803,-,SW_PUSH_6mm_H8mm,,1

@@ -55,7 +55,7 @@ def sheet(fname, title, notes, parts):
 sheet('power.kicad_sch', 'Alimentation 12 V -> 5 V -> 3,3 V', [
     "ALIMENTATION - choix et risques",
     "* J101 : jack CUI PJ-063AH (8 A, broche 2,0 mm, fiche 5,5x2,1). Charge totale max ~4,9 A (panneau 50 W + logique).",
-    "* F101 : fusible 5x20 temporise T6,3A (remplacable). Panneau 60 W => passer en T8A (marge jack reduite).",
+    "* F101 : fusible CMS NANO2 451 7 A (7,5x3,8 mm, charge 70 %). Remplacable : porte-fusible OMNI-BLOK 157x (meme empreinte).",
     "* Q101 : P-MOSFET en anti-inversion (perte ~0,35 W a 4,9 A au lieu de ~2,5 W pour une Schottky).",
     "  D101 Zener 15 V limite Vgs (Vgs max +-20 V). D102 TVS SMBJ15A apres Q101 : ecrete les surtensions.",
     "* NT101 : UNIQUE point de liaison PGND (retour LED) <-> GND (logique), place au pied de C101/J101.",
@@ -66,8 +66,8 @@ sheet('power.kicad_sch', 'Alimentation 12 V -> 5 V -> 3,3 V', [
 ], [
     ('J101', 'Connector:Barrel_Jack', 'Jack 12V 8A (PJ-063AH)', 'Connector_BarrelJack:BarrelJack_CUI_PJ-063AH_Horizontal',
         {'1': 'VIN_RAW', '2': 'PGND'}, {'MPN': 'CUI PJ-063AH'}),
-    ('F101', 'Device:Fuse', 'T6.3A 5x20', 'Fuse:Fuseholder_Cylinder-5x20mm_Schurter_0031_8201_Horizontal_Open',
-        {'1': 'VIN_RAW', '2': 'VIN_FUSED'}, {'MPN': 'Porte-fusible Schurter 0031.8201 + fusible T6.3A 250V'}),
+    ('F101', 'Device:Fuse', '7A rapide NANO2', 'Fuse:Fuse_Littelfuse-NANO2-451_453',
+        {'1': 'VIN_RAW', '2': 'VIN_FUSED'}, {'MPN': 'Littelfuse 0451007.MRL (NANO2 451, 7 A, 125 V)'}),
     ('Q101', 'Transistor_FET:Q_PMOS_GDS', 'AOD4185', 'Package_TO_SOT_SMD:TO-252-2',
         {'1': 'PFET_G', '2': 'VIN_FUSED', '3': '+12V'}, {'MPN': 'AOD4185 (P-MOS -40V -40A, ~15mOhm)'}),
     R('R101', '10k', 'PFET_G', 'PGND'),
@@ -98,8 +98,6 @@ sheet('power.kicad_sch', 'Alimentation 12 V -> 5 V -> 3,3 V', [
     R('R105', '100k', '+12V', 'VIN_SENSE'),
     R('R106', '15k', 'VIN_SENSE', 'GND'),
     C('C111', '100nF', 'VIN_SENSE', 'GND'),
-    TP('TP101', '+12V'), TP('TP102', '+5V'), TP('TP103', 'VSYS'), TP('TP104', '+3V3'),
-    TP('TP105', 'GND'), TP('TP106', 'PGND'),
     FLAG('#FLG0101', 'GND'), FLAG('#FLG0102', 'PGND'), FLAG('#FLG0103', '+12V'),
     FLAG('#FLG0104', '+5V'), FLAG('#FLG0105', 'VSYS'),
 ])
@@ -154,7 +152,6 @@ sheet('mcu.kicad_sch', 'Microcontroleur ESP32-S3-WROOM-1', [
         {'1': '+3V3', '2': 'EXP_IO39', '3': 'EXP_IO40', '4': 'EXP_IO41', '5': 'EXP_IO42', '6': 'EXP_IO47', '7': 'EXP_IO48', '8': 'GND'}, {}),
     R('R206', '1k', 'STATUS_LED', 'STAT_A'),
     LED('D201', 'Bleu', 'STAT_A', 'GND'),
-    TP('TP201', 'ESP_EN'), TP('TP202', 'ESP_IO0'),
     FLAG('#FLG0201', 'VBUS'),
 ])
 
@@ -185,7 +182,6 @@ sheet('led_driver.kicad_sch', 'Pilotage panneau LED 12 V (PWM)', [
     ('D301', 'Device:D_Schottky', 'SS54', 'Diode_SMD:D_SMC', {'1': '+12V', '2': 'LED_K'}, {'MPN': 'SS54 (5 A 40 V)'}),
     CP('C303', '100uF 35V', '+12V', 'PGND', 'Capacitor_SMD:CP_Elec_8x10.5'),
     C('C304', '1uF 50V X7R', '+12V', 'PGND', FP['C1206']),
-    TP('TP301', 'LED_PWM'), TP('TP302', 'GATE'), TP('TP303', 'LED_K'),
 ])
 
 # ---------------------------------------------------------------- 4. AUDIO
@@ -220,7 +216,6 @@ sheet('audio.kicad_sch', 'Audio I2S MAX98357A + buzzer de secours', [
     R('R402', '100R', 'BUZZER', 'BUZ_G'),
     R('R403', '100k', 'BUZ_G', 'GND'),
     ('D401', 'Device:D', '1N4148W', FP['SOD123'], {'1': '+5V', '2': 'BUZ_D'}, {}),
-    TP('TP401', 'I2S_BCLK'), TP('TP402', 'I2S_LRCLK'), TP('TP403', 'I2S_DIN'),
     FLAG('#FLG0401', '+5V_AUD'),
 ])
 
@@ -250,7 +245,6 @@ sheet('sd_card.kicad_sch', 'Lecteur microSD (SPI)', [
          '6': 'NC', '7': 'NC', '9': 'NC', '10': 'NC'}, {}),
     C('C501', '10uF 10V', '+3V3', 'GND', FP['C0805']),
     C('C502', '100nF', '+3V3', 'GND'),
-    TP('TP501', 'SD_SCK'), TP('TP502', 'SD_MISO'),
 ])
 
 # ---------------------------------------------------------------- 6. RTC
@@ -272,7 +266,6 @@ sheet('rtc.kicad_sch', 'Horloge temps reel DS3231 + pile CR2032', [
     R('R601', '10k', '+3V3', 'RTC_INT'),
     R('R602', '4.7k', '+3V3', 'I2C_SDA'),
     R('R603', '4.7k', '+3V3', 'I2C_SCL'),
-    TP('TP601', 'I2C_SDA'), TP('TP602', 'I2C_SCL'), TP('TP603', 'RTC_INT'), TP('TP604', 'VBAT'),
     FLAG('#FLG0601', 'VBAT'),
 ])
 
@@ -309,3 +302,46 @@ sheet('buttons.kicad_sch', 'Boutons utilisateur (antirebond materiel)', [
     "* GPIO4/5/6 sont dans le domaine RTC : reveil de deep-sleep possible par EXT1 (n'importe quel bouton).",
     "* Variante facade : remplacer SW801..803 par un connecteur JST-PH 4 broches vers des boutons de boitier.",
 ], btn_parts)
+
+# ---------------------------------------------------------------- REFERENCES LCSC (assemblage JLCPCB)
+# Verifiees sur lcsc.com / proposees par l'outil BOM JLCPCB (17/11/2026). Traversants et BT601 : soudure manuelle.
+LCSC_BY_VALUE = {   # (valeur, empreinte courte) -> code LCSC, pour les passifs repetes
+    ('100nF', 'C_0603'): 'C14663', ('100nF 50V', 'C_0603'): 'C14663',
+    ('10uF 16V', 'C_0805'): 'C15850', ('10uF 10V', 'C_0805'): 'C15850',
+    ('1uF', 'C_0603'): 'C15849', ('1nF', 'C_0603'): 'C1588',
+    ('10k', 'R_0603'): 'C25804', ('100k', 'R_0603'): 'C25803', ('15k', 'R_0603'): 'C22809',
+    ('1k', 'R_0603'): 'C21190', ('5.1k', 'R_0603'): 'C23186', ('1M', 'R_0603'): 'C22935',
+    ('10R', 'R_0603'): 'C22859', ('4.7R', 'R_0603'): 'C23164', ('100R', 'R_0603'): 'C22775',
+    ('22R', 'R_0603'): 'C23345', ('4.7k', 'R_0603'): 'C23162',
+}
+LCSC_BY_REF = {
+    'C101': 'C2992611', 'C102': 'C5156756', 'C103': 'C5156756', 'C106': 'C12891', 'C107': 'C12891',
+    'C201': 'C45783', 'C204': 'C115052', 'C303': 'C2992597', 'C304': 'C1848', 'C403': 'C5155334',
+    'D101': 'C19077412', 'D102': 'C2760888', 'D103': 'C8678', 'D104': 'C8678',
+    'D105': 'C12624',      # KT-0603G vert (et non la LED rouge proposee par JLCPCB)
+    'D201': 'C2288',       # KT-0603B bleu
+    'D301': 'C22452', 'D401': 'C81598',
+    'F101': 'C99548',      # Littelfuse 0451007.MRL
+    'FB401': 'C41384117',  # 600R@100MHz 2A 0805
+    'FB402': 'C85840', 'FB403': 'C85840',   # Murata BLM21PG221SN1D 220R 2A
+    'L101': 'C2044594',    # Bourns SRN6045TA-4R7M
+    'J201': 'C165948',     # HRO TYPE-C-31-M-12
+    'J501': 'C114218',     # Hirose DM3AT-SF-PEJM5
+    'Q101': 'C5371006', 'Q301': 'C99124', 'Q401': 'C20917',
+    'SW201': 'C221880', 'SW202': 'C221880', # C&K PTS645SM43SMTR92 LFS (empreinte PTS645)
+    'U101': 'C2071056',
+    'U102': 'C500795',     # AP7361C-33E-13 : PAS la version -33ER (brochage inverse)
+    'U201': 'C2913202', 'U202': 'C2827654', 'U301': 'C2676982', 'U401': 'C910544',
+    'U501': 'C2827646', 'U601': 'C722469',
+}
+EXTRA_MPN = {'SW201': 'C&K PTS645SM43SMTR92 LFS', 'SW202': 'C&K PTS645SM43SMTR92 LFS',
+             'D105': 'Hubei KENTO KT-0603G', 'D201': 'Hubei KENTO KT-0603B',
+             'FB402': 'Murata BLM21PG221SN1D', 'FB403': 'Murata BLM21PG221SN1D'}
+for _sh in SHEETS:
+    for (_ref, _lid, _val, _fp, _nets, _kw) in _sh['parts']:
+        _short = _fp.split(':')[-1][:6]
+        _code = LCSC_BY_REF.get(_ref) or LCSC_BY_VALUE.get((_val, _short))
+        if _code:
+            _kw['LCSC'] = _code
+        if _ref in EXTRA_MPN and not _kw.get('MPN'):
+            _kw['MPN'] = EXTRA_MPN[_ref]

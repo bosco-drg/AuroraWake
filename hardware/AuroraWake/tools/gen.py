@@ -140,7 +140,7 @@ class SheetWriter:
         is_pwr = lid.startswith('power:')
         u = U(self.fname, ref, X, Y)
         out = [f'\t(symbol\n\t\t(lib_id {q(lid)})\n\t\t(at {f(X)} {f(Y)} {rot})\n\t\t(unit 1)\n'
-               f'\t\t(exclude_from_sim no)\n\t\t(in_bom {"yes" if in_bom and not is_pwr else "no"})\n\t\t(on_board yes)\n\t\t(dnp no)\n\t\t(uuid {q(u)})']
+               f'\t\t(exclude_from_sim no)\n\t\t(in_bom {"yes" if in_bom and not is_pwr and not ref.startswith(("H", "NT")) else "no"})\n\t\t(on_board yes)\n\t\t(dnp no)\n\t\t(uuid {q(u)})']
         if is_pwr:
             rx, ry = X, Y
             vx, vy = self._pwr_val_pos
@@ -301,19 +301,26 @@ print('page', paper, ncol, 'colonnes')
 # ------------------------------------------------------------------ projet
 pro = {
     "meta": {"filename": f"{PROJECT}.kicad_pro", "version": 3},
-    "board": {"design_settings": {"defaults": {}, "rules": {"min_clearance": 0.2, "min_track_width": 0.2}}},
+    "board": {"design_settings": {"defaults": {}, "rules": {"min_clearance": 0.2, "min_track_width": 0.2, "min_through_hole_diameter": 0.2, "min_via_diameter": 0.6, "min_hole_to_hole": 0.5, "min_copper_edge_clearance": 0.3, "min_hole_clearance": 0.25}}},
     "net_settings": {"classes": [
         {"name": "Default", "clearance": 0.2, "track_width": 0.25, "via_diameter": 0.6, "via_drill": 0.3, "wire_width": 6, "bus_width": 12, "line_style": 0, "schematic_color": "rgba(0, 0, 0, 0.000)", "pcb_color": "rgba(0, 0, 0, 0.000)", "priority": 2147483647, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "microvia_diameter": 0.3, "microvia_drill": 0.1},
-        {"name": "PWR_LED", "clearance": 0.3, "track_width": 3.0, "via_diameter": 1.0, "via_drill": 0.5, "wire_width": 6, "bus_width": 12, "line_style": 0, "schematic_color": "rgba(0, 0, 0, 0.000)", "pcb_color": "rgba(0, 0, 0, 0.000)", "priority": 0, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "microvia_diameter": 0.3, "microvia_drill": 0.1},
-        {"name": "PWR_5V", "clearance": 0.2, "track_width": 1.0, "via_diameter": 0.8, "via_drill": 0.4, "wire_width": 6, "bus_width": 12, "line_style": 0, "schematic_color": "rgba(0, 0, 0, 0.000)", "pcb_color": "rgba(0, 0, 0, 0.000)", "priority": 1, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "microvia_diameter": 0.3, "microvia_drill": 0.1},
+        {"name": "PWR_LED", "clearance": 0.25, "track_width": 2.5, "via_diameter": 1.0, "via_drill": 0.5, "wire_width": 6, "bus_width": 12, "line_style": 0, "schematic_color": "rgba(0, 0, 0, 0.000)", "pcb_color": "rgba(0, 0, 0, 0.000)", "priority": 0, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "microvia_diameter": 0.3, "microvia_drill": 0.1},
+        {"name": "PWR_5V", "clearance": 0.2, "track_width": 0.8, "via_diameter": 0.8, "via_drill": 0.4, "wire_width": 6, "bus_width": 12, "line_style": 0, "schematic_color": "rgba(0, 0, 0, 0.000)", "pcb_color": "rgba(0, 0, 0, 0.000)", "priority": 1, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "microvia_diameter": 0.3, "microvia_drill": 0.1},
         {"name": "USB", "clearance": 0.2, "track_width": 0.3, "via_diameter": 0.6, "via_drill": 0.3, "wire_width": 6, "bus_width": 12, "line_style": 0, "schematic_color": "rgba(0, 0, 0, 0.000)", "pcb_color": "rgba(0, 0, 0, 0.000)", "priority": 3, "diff_pair_gap": 0.15, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.3, "microvia_diameter": 0.3, "microvia_drill": 0.1},
     ], "meta": {"version": 4},
         "netclass_patterns": [
-            {"netclass": "PWR_LED", "pattern": n} for n in ["VIN_RAW", "VIN_FUSED", "+12V", "PGND", "LED_K"]
-        ] + [{"netclass": "PWR_5V", "pattern": n} for n in ["+5V", "VSYS", "+5V_AUD", "BUCK_SW", "+3V3", "SPK_*"]]
-          + [{"netclass": "USB", "pattern": n} for n in ["USB_DP", "USB_DN"]]},
+            {"netclass": "PWR_LED", "pattern": n} for n in ["*VIN_RAW", "*VIN_FUSED", "+12V", "PGND", "*LED_K"]
+        ] + [{"netclass": "PWR_5V", "pattern": n} for n in ["+5V", "VSYS", "+5V_AUD", "*BUCK_SW", "+3V3", "VBUS", "*SPK_*"]]
+          + [{"netclass": "USB", "pattern": n} for n in ["*USB_DP", "*USB_DN"]]},
     "sheets": [[ROOT_UUID, "Root"]],
     "text_variables": {},
 }
-json.dump(pro, open(os.path.join(OUT, f'{PROJECT}.kicad_pro'), 'w'), indent=2)
+# fusion avec le projet existant (on ne touche qu'aux classes de nets et aux regles minimales)
+pp = os.path.join(OUT, f'{PROJECT}.kicad_pro')
+if os.path.exists(pp):
+    cur = json.load(open(pp))
+    cur.setdefault('net_settings', {}).update({k: pro['net_settings'][k] for k in ('classes', 'netclass_patterns')})
+    cur.setdefault('board', {}).setdefault('design_settings', {}).setdefault('rules', {}).update(pro['board']['design_settings']['rules'])
+    pro = cur
+json.dump(pro, open(pp, 'w'), indent=2)
 print('OK ->', OUT, '| nets globaux :', len(GLOBAL))
