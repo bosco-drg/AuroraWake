@@ -1,7 +1,0 @@
-LTspice 26.1.1 for Windows
-Circuit: C:\users\bosco\Desktop\JLCPCB\AuroraWake\hardware\SpiceSimulation\Model_Spice.net
-Start Time: Tue Sep 29 21:55:06 2026
-C:\users\bosco\Desktop\JLCPCB\AuroraWake\hardware\SpiceSimulation\Model_Spice.net(3): Node or model name expected.
-
-M1 SPICE N001 0 0 IRLZ44N
-                  ^^^^^^^

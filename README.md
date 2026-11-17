@@ -16,9 +16,7 @@ AuroraWake is a light and sound alarm clock project designed to make waking up f
 ```text
 AuroraWake/
 ├── docs/        Documentation, schematics, and design decisions
-├── firmware/    Alarm clock embedded software
 ├── hardware/    Schematics, PCB, and manufacturing files
-├── prototypes/  Tests, mockups, and experiments
 └── README.md    Project overview
 ```
 
